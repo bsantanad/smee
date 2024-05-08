@@ -23,7 +23,7 @@ struct cli_s {
     verbose: clap_verbosity_flag::Verbosity,
 
     #[arg(default_value = "~/.kube/")]
-    kubeconfig_path: String,
+    dotkube_path: String,
 }
 
 #[derive(Subcommand)]
@@ -72,12 +72,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .filter_level(args.verbose.log_level_filter())
         .init();
 
-    let kubeconfig_path_expanded = shellexpand::tilde(&args.kubeconfig_path);
-    let kubeconfig_path = std::path::Path::new(kubeconfig_path_expanded.as_ref());
+    let dotkube_path_expanded = shellexpand::tilde(&args.dotkube_path);
+    let dotkube_path = std::path::Path::new(dotkube_path_expanded.as_ref());
 
     match &args.command {
         commands_e::ls(_) => {
-            for entry in std::fs::read_dir(&kubeconfig_path)? {
+            for entry in std::fs::read_dir(&dotkube_path)? {
                 let entry = entry?;
                 let path = entry.path();
                 if path.is_dir() {
@@ -102,7 +102,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
 
         commands_e::current(_) => {
-            let kubeconfig_path = kubeconfig_path.join("config");
+            let kubeconfig_path = dotkube_path.join("config");
             if !std::path::Path::new(&kubeconfig_path).exists(){
                 println!("kubeconfig file not set");
                 log::info!(
@@ -122,18 +122,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         commands_e::set(cmd) => {
             // we need to verify:
             // the file exists under ~/.kube/ dir
-            let new_config_fullpath = kubeconfig_path.join(&cmd.kubeconfig_file);
+            let new_config_fullpath = dotkube_path.join(&cmd.kubeconfig_file);
             if !std::path::Path::new(&new_config_fullpath).exists(){
                 log::error!(
                     "{} does not exists inside {}, consider adding it via \
                      `add` subcommand. --help for more info",
                     cmd.kubeconfig_file.bold(),
-                    kubeconfig_path.display(),
+                    dotkube_path.display(),
                 );
                 panic!()
             }
 
-            let kubeconfig_file_path = kubeconfig_path.join("config");
+            let kubeconfig_file_path = dotkube_path.join("config");
             let _ = match std::fs::remove_file(&kubeconfig_file_path) {
                 Ok(()) => "",
                 Err(e) if e.kind() == std::io::ErrorKind::NotFound => "",
@@ -144,7 +144,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
 
         commands_e::unset(_) => {
-            let kubeconfig_file_path = kubeconfig_path.join("config");
+            let kubeconfig_file_path = dotkube_path.join("config");
             std::fs::remove_file(&kubeconfig_file_path)?;
         }
 
