@@ -10,7 +10,7 @@ hand for Capitan Hook in Peter Pan.
 
 Wait, isn't using rust a bit of an overkill for this? Yes.
 Couldn't this just be a simple bash script? Also yes.
-Could this just be a some aliases in your .bashrc file? Of course.
+Could this just be some aliases in your .bashrc file? Of course.
 
 [1][kubectl]: https://kubernetes.io/docs/reference/kubectl/
 
