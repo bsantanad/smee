@@ -1,0 +1,35 @@
+====================================
+⛵️ smee: k8s kubeconfig file manager
+====================================
+
+CLI tool that allows you to manage your kubeconfig files, listing, adding,
+unsetting and setting which one should [kubectl][1] use.
+
+Why smee? Keeping with the nautical theme of Kubernetes, Smee is the second
+hand for Capitan Hook in Peter Pan.
+
+Wait, isn't using rust a bit of an overkill for this? Yes.
+Couldn't this just be a simple bash script? Also yes.
+Could this just be a some aliases in your .bashrc file? Of course.
+
+[1][kubectl]: https://kubernetes.io/docs/reference/kubectl/
+
+Usage
+-----
+
+Usage: smee [OPTIONS] [KUBECONFIG_PATH] <COMMAND>
+
+Commands:
+  ls       List your kubeconfig files under ~/.kube/
+  current  Get current kubeconfig file
+  set      Set a kubeconfig file to be used
+  unset    Unset the current kubeconfig file
+  help     Print this message or the help of the given subcommand(s)
+
+Arguments:
+  [KUBECONFIG_PATH]  [default: ~/.kube/]
+
+Options:
+  -v, --verbose...  Increase logging verbosity
+  -q, --quiet...    Decrease logging verbosity
+  -h, --help        Print help
