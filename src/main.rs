@@ -145,6 +145,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         commands_e::unset(_) => {
             let kubeconfig_file_path = dotkube_path.join("config");
+            if !kubeconfig_file_path.exists(){
+                println!("No kubeconfig file set");
+                return Ok(());
+            }
             std::fs::remove_file(&kubeconfig_file_path)?;
         }
         commands_e::add(cmd) => {
