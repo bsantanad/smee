@@ -12,24 +12,62 @@ Wait, isn't using rust a bit of an overkill for this? Yes.
 Couldn't this just be a simple bash script? Also yes.
 Could this just be some aliases in your .bashrc file? Of course.
 
-[1][kubectl]: https://kubernetes.io/docs/reference/kubectl/
+
+Theory of Operation
+-------------------
+
+You have many k8s clusters and do not want to deal with having a huge config
+file with all of them. Due to the fact that, when your certificates renew it
+can be a pain to update that huge file.
+
+Using `smee` you can just download your kubeconfig file and do `smee add
+<filename>` then you can `smee set <filename>` to use it as your kubeconfig
+file.
+
+Some examples:
+
+See your current kubeconfig file:
+```
+% smee current
+config -> /home/foo/.kube/cluster.a.config
+```
+
+See all your kubeconfig files:
+```
+% smee ls
+cluster.a.config
+config -> /home/foo/.kube/cluster.a.config
+kind.config
+cluster.b.config
+```
+
+Select a kubeconfig file :
+```
+% smee set cluster.b.config
+```
+
 
 Usage
 -----
 
-Usage: smee [OPTIONS] [KUBECONFIG_PATH] <COMMAND>
+Usage: smee [OPTIONS] [DOTKUBE_PATH] <COMMAND>
 
 Commands:
   ls       List your kubeconfig files under ~/.kube/
   current  Get current kubeconfig file
   set      Set a kubeconfig file to be used
   unset    Unset the current kubeconfig file
+  add      Add a kubeconfig file to ~/.kube/ dir
+  delete   Delete a kubeconfig file from your ~/.kube/ dir
   help     Print this message or the help of the given subcommand(s)
 
 Arguments:
-  [KUBECONFIG_PATH]  [default: ~/.kube/]
+  [DOTKUBE_PATH]  [default: ~/.kube/]
 
 Options:
   -v, --verbose...  Increase logging verbosity
   -q, --quiet...    Decrease logging verbosity
   -h, --help        Print help
+
+
+[1][kubectl]: https://kubernetes.io/docs/reference/kubectl/
