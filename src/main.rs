@@ -122,17 +122,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
 
         commands_e::set(cmd) => {
-            // we need to verify:
-            // the file exists under ~/.kube/ dir
             let new_config_fullpath = dotkube_path.join(&cmd.kubeconfig_file);
             if !std::path::Path::new(&new_config_fullpath).exists(){
-                log::error!(
+                println!(
                     "{} does not exists inside {}, consider adding it via \
-                     `add` subcommand. --help for more info",
+                     `add` subcommand. Do --help for more info. Bailing out.",
                     cmd.kubeconfig_file.bold(),
                     dotkube_path.display(),
                 );
-                panic!()
+                return Ok(());
             }
 
             let kubeconfig_file_path = dotkube_path.join("config");
