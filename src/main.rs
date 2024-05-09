@@ -8,7 +8,6 @@
  *
  * TODO split code into functions
  * TODO add a bit more docs to the functions
- * TODO add and delete file subcommands
  */
 use colored::Colorize;
 use clap::{command, Parser, Subcommand};
@@ -36,10 +35,10 @@ enum commands_e {
    set(set_s),
    #[command(about = "Unset the current kubeconfig file")]
    unset(unset_s),
-   /*
    #[command(about = "Add a kubeconfig file to ~/.kube/ dir")]
    add(add_s),
-   */
+   #[command(about = "Delete a kubeconfig file from your ~/.kube/ dir")]
+   delete(delete_s),
 }
 
 #[derive(Parser)]
@@ -56,12 +55,15 @@ struct set_s {
 #[derive(Parser)]
 struct unset_s { }
 
-/*
 #[derive(Parser)]
 struct add_s {
-    file: std::path::PathBuf,
+    filename: String,
 }
-*/
+
+#[derive(Parser)]
+struct delete_s {
+    filename: String,
+}
 
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -146,6 +148,33 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         commands_e::unset(_) => {
             let kubeconfig_file_path = dotkube_path.join("config");
             std::fs::remove_file(&kubeconfig_file_path)?;
+        }
+        commands_e::add(cmd) => {
+            let filepath = std::path::Path::new(&cmd.filename);
+            if !filepath.exists(){
+                println!(
+                    "Could not find file: {}. Does it exists? Bailing out",
+                    cmd.filename.bold(),
+                );
+                return Ok(());
+            }
+            let filename = filepath.file_name()
+                .expect("Expected a valid file name");
+            let new_path = dotkube_path.join(filename);
+            std::fs::copy(&cmd.filename, new_path)?;
+        }
+        commands_e::delete(cmd) => {
+            let new_config_fullpath = dotkube_path.join(&cmd.filename);
+            if !std::path::Path::new(&new_config_fullpath).exists(){
+                println!(
+                    "{} does not exists inside {}, nothing to delete, \
+                    bailing out",
+                    cmd.filename.bold(),
+                    dotkube_path.display(),
+                );
+                return Ok(())
+            }
+            std::fs::remove_file(&new_config_fullpath)?;
         }
 
     }
