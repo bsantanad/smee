@@ -78,6 +78,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let dotkube_path = std::path::Path::new(dotkube_path_expanded.as_ref());
 
     match &args.command {
+
         commands_e::ls(_) => {
             for entry in std::fs::read_dir(&dotkube_path)? {
                 let entry = entry?;
@@ -151,6 +152,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             std::fs::remove_file(&kubeconfig_file_path)?;
         }
+
         commands_e::add(cmd) => {
             let filepath = std::path::Path::new(&cmd.filename);
             if !filepath.exists(){
@@ -165,6 +167,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let new_path = dotkube_path.join(filename);
             std::fs::copy(&cmd.filename, new_path)?;
         }
+
         commands_e::delete(cmd) => {
             let new_config_fullpath = dotkube_path.join(&cmd.filename);
             if !std::path::Path::new(&new_config_fullpath).exists(){
